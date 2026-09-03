@@ -62,7 +62,7 @@ parameters:
   cookie_path: /
 
 cors:
-  allowed-origins: http://localhost:3000,http://10.74.51.227:5173
+  allowed-origins: http://localhost:3000,http://10.74.51.227:5173,https://vendy-front.vercel.app
 
 app:
   # URL pública donde vive el frontend (Vite SPA). Se usa para redirigir a
