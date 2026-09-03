@@ -42,6 +42,7 @@ public class NegocioResponse {
     private Font font;
     private Radius radius;
     private Cover cover;
+    private String coverImageUrl;
     private CatalogLayout catalogLayout;
     private List<MetodoPagoResponse> metodosPago;
     private LocalDateTime createdAt;
@@ -68,6 +69,7 @@ public class NegocioResponse {
                 .font(apariencia != null ? apariencia.getFont() : null)
                 .radius(apariencia != null ? apariencia.getRadius() : null)
                 .cover(apariencia != null ? apariencia.getCover() : null)
+                .coverImageUrl(apariencia != null ? apariencia.getCoverImageUrl() : null)
                 .catalogLayout(apariencia != null ? apariencia.getCatalogLayout() : null)
                 .metodosPago(negocio.getMetodosPago().stream().map(MetodoPagoResponse::from).toList())
                 .createdAt(negocio.getCreatedAt())

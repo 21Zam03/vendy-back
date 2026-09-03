@@ -50,4 +50,10 @@ public class NegocioController {
         String url = imagenStorageService.subirLogoNegocio(file);
         return ResponseEntity.ok(new ImagenSubidaResponse(url));
     }
+
+    @PostMapping("/portada")
+    public ResponseEntity<ImagenSubidaResponse> subirPortada(@RequestParam("file") MultipartFile file) {
+        String url = imagenStorageService.subirPortadaNegocio(file);
+        return ResponseEntity.ok(new ImagenSubidaResponse(url));
+    }
 }

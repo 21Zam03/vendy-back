@@ -55,7 +55,7 @@ yolo:
     url: http://localhost:8000
 
 parameters:
-  cookie_is_secure: true
+  cookie_is_secure: false
   cookie_max_age: 28800
   cookie_name: auth_token
   cookie_http_only: true

@@ -34,6 +34,7 @@ public class ColeccionPublicaResponse {
     private Font font;
     private Radius radius;
     private Cover cover;
+    private String coverImageUrl;
     private CatalogLayout catalogLayout;
     private List<CategoriaResponse> categorias;
     private List<ProductoPublicoResponse> productos;
@@ -60,6 +61,7 @@ public class ColeccionPublicaResponse {
                 .font(apariencia != null ? apariencia.getFont() : null)
                 .radius(apariencia != null ? apariencia.getRadius() : null)
                 .cover(apariencia != null ? apariencia.getCover() : null)
+                .coverImageUrl(apariencia != null ? apariencia.getCoverImageUrl() : null)
                 .catalogLayout(apariencia != null ? apariencia.getCatalogLayout() : null)
                 .categorias(categorias)
                 .productos(productosActivos.stream().map(ProductoPublicoResponse::from).toList())

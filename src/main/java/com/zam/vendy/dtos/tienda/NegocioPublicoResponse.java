@@ -43,6 +43,7 @@ public class NegocioPublicoResponse {
     private Font font;
     private Radius radius;
     private Cover cover;
+    private String coverImageUrl;
     private CatalogLayout catalogLayout;
     private List<MetodoPagoResponse> metodosPago;
     private List<EnlaceResponse> enlaces;
@@ -67,6 +68,7 @@ public class NegocioPublicoResponse {
                 .font(apariencia != null ? apariencia.getFont() : null)
                 .radius(apariencia != null ? apariencia.getRadius() : null)
                 .cover(apariencia != null ? apariencia.getCover() : null)
+                .coverImageUrl(apariencia != null ? apariencia.getCoverImageUrl() : null)
                 .catalogLayout(apariencia != null ? apariencia.getCatalogLayout() : null)
                 .metodosPago(negocio.getMetodosPago().stream().map(MetodoPagoResponse::from).toList())
                 .enlaces(enlaces.stream().map(EnlaceResponse::from).toList())

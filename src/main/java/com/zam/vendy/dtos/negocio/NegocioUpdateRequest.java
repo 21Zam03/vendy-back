@@ -64,6 +64,8 @@ public class NegocioUpdateRequest {
     @NotNull(message = "cover es obligatorio")
     private Cover cover;
 
+    private String coverImageUrl;
+
     private CatalogLayout catalogLayout;
 
     private List<MetodoPagoRequest> metodosPago;

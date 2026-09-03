@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Cover {
 
     SOLID("solid"),
-    GRADIENT("gradient");
+    GRADIENT("gradient"),
+    IMAGEN("imagen");
 
     private final String value;
 

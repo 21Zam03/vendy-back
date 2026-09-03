@@ -35,6 +35,7 @@ public class CatalogoResponse {
     private Font font;
     private Radius radius;
     private Cover cover;
+    private String coverImageUrl;
     private CatalogLayout catalogLayout;
     private List<ProductoResponse> productos;
     private LocalDateTime createdAt;
@@ -53,6 +54,7 @@ public class CatalogoResponse {
                 .font(apariencia != null ? apariencia.getFont() : null)
                 .radius(apariencia != null ? apariencia.getRadius() : null)
                 .cover(apariencia != null ? apariencia.getCover() : null)
+                .coverImageUrl(apariencia != null ? apariencia.getCoverImageUrl() : null)
                 .catalogLayout(apariencia != null ? apariencia.getCatalogLayout() : null)
                 .productos(catalogo.getProductos().stream().map(ProductoResponse::from).toList())
                 .createdAt(catalogo.getCreatedAt())

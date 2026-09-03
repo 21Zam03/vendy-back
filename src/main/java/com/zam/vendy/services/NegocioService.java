@@ -68,6 +68,7 @@ public class NegocioService {
                 .font(request.getFont())
                 .radius(request.getRadius())
                 .cover(request.getCover())
+                .coverImageUrl(request.getCoverImageUrl())
                 .catalogLayout(request.getCatalogLayout() != null ? request.getCatalogLayout() : CatalogLayout.GRID)
                 .build());
 

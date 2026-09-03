@@ -49,6 +49,8 @@ public class CatalogoRequest {
     @NotNull(message = "cover es obligatorio")
     private Cover cover;
 
+    private String coverImageUrl;
+
     private CatalogLayout catalogLayout;
 
     private List<Long> productoIds;

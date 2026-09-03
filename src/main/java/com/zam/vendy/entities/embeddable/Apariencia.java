@@ -44,4 +44,8 @@ public class Apariencia {
     // así que negocios ya guardados no van a tener valor hasta que lo actualicen.
     @Column(name = "catalog_layout")
     private CatalogLayout catalogLayout;
+
+    // Solo se usa cuando cover = IMAGEN; en solid/gradient queda null.
+    @Column(name = "cover_image_url", length = 1000)
+    private String coverImageUrl;
 }

@@ -42,6 +42,10 @@ public class ImagenStorageService {
         return subirImagen(archivo, "negocios");
     }
 
+    public String subirPortadaNegocio(MultipartFile archivo) {
+        return subirImagen(archivo, "negocios/portadas");
+    }
+
     private String subirImagen(MultipartFile archivo, String carpeta) {
         validar(archivo);
 
