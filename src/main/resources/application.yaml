@@ -1,0 +1,74 @@
+server:
+  port: 8080
+  tomcat:
+    max-part-count: 50
+
+spring:
+  application:
+    name: vendy
+
+  datasource:
+    url: jdbc:mysql://vps-5943657-x.dattaweb.com:3306/zavefy_sass_db?allowPublicKeyRetrieval=true
+    username: root
+    password: 21josesamuel03
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000
+      max-lifetime: 540000
+      keepalive-time: 300000
+      connection-timeout: 30000
+      validation-timeout: 5000
+  jpa:
+    generate-ddl: false
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        enable_lazy_load_no_trans: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+          batch_size: 100
+
+    hibernate:
+      ddl-auto: update
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+security:
+  jwt:
+    key:
+      private: mi_clave_super_secreta_123456
+    user:
+      generator: vendy-app
+    expiration: 28800000
+
+yolo:
+  service:
+    url: http://localhost:8000
+
+parameters:
+  cookie_is_secure: false
+  cookie_max_age: 28800
+  cookie_name: auth_token
+  cookie_http_only: true
+  cookie_path: /
+
+cors:
+  allowed-origins: http://localhost:3000,http://10.74.51.227:5173
+
+app:
+  # URL pública donde vive el frontend (Vite SPA). Se usa para redirigir a
+  # personas reales desde las páginas de preview de Open Graph (ver TiendaPreviewController).
+  public-frontend-url: http://localhost:5173
+
+firebase:
+  credentials-path: classpath:bodega-sistemas-4b241-firebase-adminsdk-fbsvc-0a5a452962.json
+  storage-bucket: bodega-sistemas-4b241.firebasestorage.app
