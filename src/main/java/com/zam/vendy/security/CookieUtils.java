@@ -38,7 +38,7 @@ public class CookieUtils {
                 .secure(cookieSecure)
                 .path(cookiePath)
                 .maxAge(cookieMaxAge)
-                .sameSite("Lax")
+                .sameSite(resolveSameSite())
                 .build();
     }
 
@@ -48,8 +48,19 @@ public class CookieUtils {
                 .secure(cookieSecure)
                 .path(cookiePath)
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite(resolveSameSite())
                 .build();
+    }
+
+    // Frontend y backend viven en dominios distintos (vendy-front.vercel.app vs
+    // api2.zavefy.com) => la cookie es "cross-site" de verdad. SameSite=Lax nunca se
+    // manda en llamadas fetch/XHR entre sitios distintos, solo en navegaciones de página
+    // completa — por eso el login "funcionaba" pero todo lo demás daba 401.
+    // SameSite=None es obligatorio para que el navegador la reenvíe en esos fetch, pero
+    // los navegadores exigen que además sea Secure (solo funciona con HTTPS real), así
+    // que en dev (http, sin secure) hay que seguir usando Lax.
+    private String resolveSameSite() {
+        return cookieSecure ? "None" : "Lax";
     }
 
     public String extractTokenFromCookies(HttpServletRequest request) {
