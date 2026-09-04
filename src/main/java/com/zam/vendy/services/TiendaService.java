@@ -140,6 +140,15 @@ public class TiendaService {
 
         LocalDate hoy = LocalDate.now();
 
+        // Se verifica existencia antes de insertar (en vez de insertar y capturar la violación
+        // de constraint): Hibernate marca la transacción como rollback-only en cuanto el INSERT
+        // choca con el índice único, y catchear la excepción en Java no revierte eso — el commit
+        // de este método @Transactional fallaría igual al final, tumbando toda la respuesta del
+        // catálogo. Por eso recargar la página (mismo visitorId, mismo día) rompía el endpoint.
+        if (visitaEventoRepository.existsByNegocio_IdAndVisitorIdAndFecha(negocio.getId(), visitorId, hoy)) {
+            return; // ya se contó a este visitante hoy
+        }
+
         try {
             visitaEventoRepository.save(VisitaEvento.builder()
                     .negocio(negocio)
@@ -147,7 +156,7 @@ public class TiendaService {
                     .fecha(hoy)
                     .build());
         } catch (DataIntegrityViolationException exception) {
-            return; // ya se contó a este visitante hoy
+            return; // carrera: otro request concurrente del mismo visitante ya lo insertó
         }
 
         int actualizadas = visitaCatalogoRepository.incrementarCantidad(negocio.getId(), hoy);
