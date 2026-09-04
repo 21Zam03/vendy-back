@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,8 +47,9 @@ public class TiendaController {
     }
 
     @GetMapping("/catalogo")
-    public ResponseEntity<CatalogoResponse> catalogo(@PathVariable String slug) {
-        CatalogoData datos = tiendaService.obtenerCatalogo(slug);
+    public ResponseEntity<CatalogoResponse> catalogo(@PathVariable String slug,
+            @RequestHeader(value = "X-Visitor-Id", required = false) String visitorId) {
+        CatalogoData datos = tiendaService.obtenerCatalogo(slug, visitorId);
 
         List<CategoriaResponse> categorias = datos.categorias().stream()
                 .map(CategoriaResponse::from)
@@ -77,8 +79,10 @@ public class TiendaController {
 
     @GetMapping("/colecciones/{coleccionSlug}")
     public ResponseEntity<ColeccionPublicaResponse> coleccion(@PathVariable String slug,
-            @PathVariable String coleccionSlug) {
-        return ResponseEntity.ok(ColeccionPublicaResponse.from(tiendaService.obtenerColeccion(slug, coleccionSlug)));
+            @PathVariable String coleccionSlug,
+            @RequestHeader(value = "X-Visitor-Id", required = false) String visitorId) {
+        return ResponseEntity.ok(ColeccionPublicaResponse.from(
+                tiendaService.obtenerColeccion(slug, coleccionSlug, visitorId)));
     }
 
     @GetMapping("/productos/{productoId}")

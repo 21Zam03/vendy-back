@@ -7,7 +7,13 @@ public enum Cover {
 
     SOLID("solid"),
     GRADIENT("gradient"),
-    IMAGEN("imagen");
+    IMAGEN("imagen"),
+    NAVIDAD("navidad"),
+    HALLOWEEN("halloween"),
+    SAN_VALENTIN("san_valentin"),
+    VERANO("verano"),
+    BLACK_FRIDAY("black_friday"),
+    ANO_NUEVO("ano_nuevo");
 
     private final String value;
 

@@ -13,4 +13,6 @@ public interface NegocioRepository extends JpaRepository<Negocio, Long> {
     Optional<Negocio> findBySlug(String slug);
 
     boolean existsBySlug(String slug);
+
+    boolean existsByIdAndUsuario_IdUsuario(Long id, Integer idUsuario);
 }
