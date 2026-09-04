@@ -3,6 +3,7 @@ package com.zam.vendy.security.jwt;
 import java.io.IOException;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,7 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-            } catch (JWTVerificationException exception) {
+            } catch (JWTVerificationException | AuthenticationException exception) {
+                // Token corrupto/expirado, o referencia a un usuario que ya no existe:
+                // se ignora y la petición sigue como anónima (rutas públicas no deben romperse por esto).
                 SecurityContextHolder.clearContext();
             }
         }
