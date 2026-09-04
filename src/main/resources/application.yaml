@@ -67,7 +67,7 @@ cors:
 app:
   # URL pública donde vive el frontend (Vite SPA). Se usa para redirigir a
   # personas reales desde las páginas de preview de Open Graph (ver TiendaPreviewController).
-  public-frontend-url: http://localhost:5173
+  public-frontend-url: https://vendy-front.vercel.app
 
 firebase:
   credentials-path: classpath:bodega-sistemas-4b241-firebase-adminsdk-fbsvc-0a5a452962.json
