@@ -10,7 +10,10 @@ public enum AccentColor {
     ROSE("rose"),
     AMBER("amber"),
     SKY("sky"),
-    SLATE("slate");
+    SLATE("slate"),
+    // El hex real vive en Apariencia.accentColorHex; este valor solo marca que el
+    // negocio eligió un color propio en vez de uno de la paleta predefinida.
+    CUSTOM("custom");
 
     private final String value;
 

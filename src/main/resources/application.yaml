@@ -55,14 +55,14 @@ yolo:
     url: http://localhost:8000
 
 parameters:
-  cookie_is_secure: true
+  cookie_is_secure: false
   cookie_max_age: 28800
   cookie_name: auth_token
   cookie_http_only: true
   cookie_path: /
 
 cors:
-  allowed-origins: http://localhost:3000,http://10.74.51.227:5173,https://vendy-front.vercel.app
+  allowed-origins: http://localhost:3000,http://10.74.51.227:5173,https://vendy-front.vercel.app,http://172.20.181.227:5173
 
 app:
   # URL pública donde vive el frontend (Vite SPA). Se usa para redirigir a

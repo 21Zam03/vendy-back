@@ -5,6 +5,7 @@ import com.zam.vendy.entities.enums.Background;
 import com.zam.vendy.entities.enums.CatalogLayout;
 import com.zam.vendy.entities.enums.Cover;
 import com.zam.vendy.entities.enums.Font;
+import com.zam.vendy.entities.enums.Plantilla;
 import com.zam.vendy.entities.enums.Radius;
 
 import jakarta.persistence.Column;
@@ -48,4 +49,17 @@ public class Apariencia {
     // Solo se usa cuando cover = IMAGEN; en solid/gradient queda null.
     @Column(name = "cover_image_url", length = 1000)
     private String coverImageUrl;
+
+    // Nullable: null significa "sin plantilla elegida", en cuyo caso la página pública
+    // usa la composición genérica de siempre (sin romper negocios ya existentes).
+    @Column(name = "plantilla")
+    private Plantilla plantilla;
+
+    // Solo se usa cuando accentColor = CUSTOM; en cualquier otro caso queda null.
+    @Column(name = "accent_color_hex", length = 9)
+    private String accentColorHex;
+
+    // Solo se usa cuando background = IMAGEN; en el resto de fondos queda null.
+    @Column(name = "background_image_url", length = 1000)
+    private String backgroundImageUrl;
 }

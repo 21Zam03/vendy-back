@@ -7,6 +7,7 @@ import com.zam.vendy.entities.enums.Background;
 import com.zam.vendy.entities.enums.CatalogLayout;
 import com.zam.vendy.entities.enums.Cover;
 import com.zam.vendy.entities.enums.Font;
+import com.zam.vendy.entities.enums.Plantilla;
 import com.zam.vendy.entities.enums.Radius;
 
 import jakarta.validation.constraints.NotBlank;
@@ -38,6 +39,8 @@ public class NegocioUpdateRequest {
 
     private String ubicacion;
 
+    private String horario;
+
     @Size(max = 2, message = "logoInitials admite máximo 2 caracteres")
     private String logoInitials;
 
@@ -67,6 +70,13 @@ public class NegocioUpdateRequest {
     private String coverImageUrl;
 
     private CatalogLayout catalogLayout;
+
+    private Plantilla plantilla;
+
+    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "accentColorHex debe ser un color hexadecimal, ej. #5a32f4")
+    private String accentColorHex;
+
+    private String backgroundImageUrl;
 
     private List<MetodoPagoRequest> metodosPago;
 }

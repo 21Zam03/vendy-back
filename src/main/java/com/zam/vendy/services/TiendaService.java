@@ -14,6 +14,7 @@ import com.zam.vendy.entities.Categoria;
 import com.zam.vendy.entities.ConsultaWhatsapp;
 import com.zam.vendy.entities.EnlaceNegocio;
 import com.zam.vendy.entities.Negocio;
+import com.zam.vendy.entities.Pestana;
 import com.zam.vendy.entities.Producto;
 import com.zam.vendy.entities.Seccion;
 import com.zam.vendy.entities.VisitaCatalogo;
@@ -24,6 +25,7 @@ import com.zam.vendy.repositories.CategoriaRepository;
 import com.zam.vendy.repositories.ConsultaWhatsappRepository;
 import com.zam.vendy.repositories.EnlaceNegocioRepository;
 import com.zam.vendy.repositories.NegocioRepository;
+import com.zam.vendy.repositories.PestanaRepository;
 import com.zam.vendy.repositories.ProductoRepository;
 import com.zam.vendy.repositories.SeccionRepository;
 import com.zam.vendy.repositories.VisitaCatalogoRepository;
@@ -45,6 +47,8 @@ public class TiendaService {
     private final EnlaceNegocioRepository enlaceNegocioRepository;
     private final CatalogoRepository catalogoRepository;
     private final SeccionRepository seccionRepository;
+    private final PestanaRepository pestanaRepository;
+    private final PestanaService pestanaService;
 
     @Transactional(readOnly = true)
     public Negocio obtenerPorSlug(String slug) {
@@ -63,10 +67,18 @@ public class TiendaService {
         return productoRepository.findByNegocio_IdAndActivoTrueAndDestacadoTrueOrderByCreatedAtDesc(negocio.getId());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Seccion> obtenerSecciones(String slug) {
         Negocio negocio = obtenerPorSlug(slug);
+        pestanaService.asegurarSinHuerfanas(negocio);
         return seccionRepository.findByNegocio_IdOrderByOrdenAscIdAsc(negocio.getId());
+    }
+
+    @Transactional
+    public List<Pestana> obtenerPestanas(String slug) {
+        Negocio negocio = obtenerPorSlug(slug);
+        pestanaService.asegurarSinHuerfanas(negocio);
+        return pestanaRepository.findByNegocio_IdOrderByOrdenAscIdAsc(negocio.getId());
     }
 
     @Transactional(readOnly = true)
@@ -91,7 +103,7 @@ public class TiendaService {
         registrarVisita(negocio, visitorId);
 
         List<Categoria> categorias = categoriaRepository.findByNegocio_IdOrderByNombreAsc(negocio.getId());
-        List<Producto> productos = productoRepository.findByNegocio_IdAndActivoTrue(negocio.getId());
+        List<Producto> productos = productoRepository.findByNegocio_IdAndActivoTrueOrderByOrdenAscIdAsc(negocio.getId());
 
         return new CatalogoData(categorias, productos);
     }

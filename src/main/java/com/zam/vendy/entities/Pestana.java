@@ -18,19 +18,20 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Un grupo de productos dentro de una Pestaña del catálogo, definido libremente por el
- * negocio (ej. "Productos top", "Más vendidos", "Novedades"). Se muestran como bloques
- * separados dentro de su pestaña en el catálogo público, en el orden que el negocio elija.
+ * Agrupa Secciones dentro del catálogo (ej. "Hombre" y "Mujer" como pestañas, cada una
+ * con sus propias secciones "Novedades", "Ofertas"). Toda Sección pertenece a exactamente
+ * una Pestaña — es el primer nivel de la estructura del catálogo, definido libremente por
+ * el negocio, y se muestran como pestañas navegables en el catálogo público.
  */
 @Entity
-@Table(name = "seccion")
+@Table(name = "pestana")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Seccion {
+public class Pestana {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,16 +46,6 @@ public class Seccion {
 
     @Column(name = "nombre", nullable = false)
     private String nombre;
-
-    // Nullable a propósito: se agregó después de que ya existieran secciones sin pestaña.
-    // La API exige pestanaId en toda creación nueva (ver SeccionService.crear) y
-    // PestanaService.asegurarSinHuerfanas asigna una pestaña "General" a las que
-    // quedaron sin una — así la jerarquía pestaña → sección queda completa sin migrar
-    // datos a mano.
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pestana_id")
-    private Pestana pestana;
 
     @Column(name = "orden", nullable = false)
     @Builder.Default

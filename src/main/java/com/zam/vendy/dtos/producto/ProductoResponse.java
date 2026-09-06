@@ -35,6 +35,7 @@ public class ProductoResponse {
     private String emoji;
     private String color;
     private String imagenUrl;
+    private Integer orden;
     private Long vistas;
     private Long consultas;
     private LocalDateTime createdAt;
@@ -60,6 +61,7 @@ public class ProductoResponse {
                 .emoji(producto.getEmoji())
                 .color(producto.getColor())
                 .imagenUrl(producto.getImagenUrl())
+                .orden(producto.getOrden())
                 .vistas(producto.getVistas())
                 .consultas(producto.getConsultas())
                 .createdAt(producto.getCreatedAt())

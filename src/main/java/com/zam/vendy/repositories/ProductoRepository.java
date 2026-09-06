@@ -24,6 +24,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     long countByNegocio_IdAndActivoTrue(Long negocioId);
 
+    List<Producto> findByNegocio_IdAndSeccion_Id(Long negocioId, Long seccionId);
+
+    List<Producto> findByNegocio_IdAndSeccionIsNull(Long negocioId);
+
+    List<Producto> findByNegocio_IdAndActivoTrueOrderByOrdenAscIdAsc(Long negocioId);
+
     @Modifying
     @Query("UPDATE Producto p SET p.categoria = null WHERE p.categoria.id = :categoriaId")
     int desasociarCategoria(@Param("categoriaId") Long categoriaId);

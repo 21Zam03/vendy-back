@@ -56,4 +56,10 @@ public class NegocioController {
         String url = imagenStorageService.subirPortadaNegocio(file);
         return ResponseEntity.ok(new ImagenSubidaResponse(url));
     }
+
+    @PostMapping("/fondo")
+    public ResponseEntity<ImagenSubidaResponse> subirFondo(@RequestParam("file") MultipartFile file) {
+        String url = imagenStorageService.subirFondoNegocio(file);
+        return ResponseEntity.ok(new ImagenSubidaResponse(url));
+    }
 }

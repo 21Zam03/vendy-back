@@ -34,6 +34,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", exception.getMessage()));
     }
 
+    @ExceptionHandler(PestanaNoVaciaException.class)
+    public ResponseEntity<Map<String, String>> handlePestanaNoVacia(PestanaNoVaciaException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", exception.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException exception) {
         Map<String, String> errores = new LinkedHashMap<>();

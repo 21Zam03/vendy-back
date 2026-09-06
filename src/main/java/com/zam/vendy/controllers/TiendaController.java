@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zam.vendy.dtos.categoria.CategoriaResponse;
+import com.zam.vendy.dtos.pestana.PestanaResponse;
 import com.zam.vendy.dtos.seccion.SeccionResponse;
 import com.zam.vendy.dtos.tienda.CatalogoResponse;
 import com.zam.vendy.dtos.tienda.ColeccionPublicaResponse;
@@ -67,6 +68,14 @@ public class TiendaController {
                 .map(SeccionResponse::from)
                 .toList();
         return ResponseEntity.ok(secciones);
+    }
+
+    @GetMapping("/pestanas")
+    public ResponseEntity<List<PestanaResponse>> pestanas(@PathVariable String slug) {
+        List<PestanaResponse> pestanas = tiendaService.obtenerPestanas(slug).stream()
+                .map(PestanaResponse::from)
+                .toList();
+        return ResponseEntity.ok(pestanas);
     }
 
     @GetMapping("/colecciones")

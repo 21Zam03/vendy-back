@@ -53,6 +53,7 @@ public class NegocioService {
         negocio.setDescripcion(request.getDescripcion());
         negocio.setWhatsapp(request.getWhatsapp());
         negocio.setUbicacion(request.getUbicacion());
+        negocio.setHorario(request.getHorario());
         negocio.setLogoInitials(request.getLogoInitials());
         negocio.setLogoUrl(request.getLogoUrl());
 
@@ -70,6 +71,9 @@ public class NegocioService {
                 .cover(request.getCover())
                 .coverImageUrl(request.getCoverImageUrl())
                 .catalogLayout(request.getCatalogLayout() != null ? request.getCatalogLayout() : CatalogLayout.GRID)
+                .plantilla(request.getPlantilla())
+                .accentColorHex(request.getAccentColorHex())
+                .backgroundImageUrl(request.getBackgroundImageUrl())
                 .build());
 
         negocio.setMetodosPago(mapearMetodosPago(request.getMetodosPago()));

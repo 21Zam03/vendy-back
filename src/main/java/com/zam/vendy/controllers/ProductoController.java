@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zam.vendy.dtos.producto.ImagenSubidaResponse;
 import com.zam.vendy.dtos.producto.ProductoRequest;
 import com.zam.vendy.dtos.producto.ProductoResponse;
+import com.zam.vendy.dtos.producto.ReordenarProductosRequest;
 import com.zam.vendy.security.userdetails.UserDetailsImpl;
 import com.zam.vendy.services.ImagenStorageService;
 import com.zam.vendy.services.ProductoService;
@@ -62,6 +63,19 @@ public class ProductoController {
     public ResponseEntity<Void> eliminar(@AuthenticationPrincipal UserDetailsImpl principal, @PathVariable Long id) {
         productoService.eliminar(principal.getIdUsuario(), id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Reordena los productos DENTRO de una sección (o del grupo "sin sección" si
+    // seccionId es null) — no afecta el orden de otras secciones.
+    @PutMapping("/orden")
+    public ResponseEntity<List<ProductoResponse>> reordenar(@AuthenticationPrincipal UserDetailsImpl principal,
+            @Valid @RequestBody ReordenarProductosRequest request) {
+        List<ProductoResponse> productos = productoService
+                .reordenarEnSeccion(principal.getIdUsuario(), request.getSeccionId(), request.getIdsEnOrden())
+                .stream()
+                .map(ProductoResponse::from)
+                .toList();
+        return ResponseEntity.ok(productos);
     }
 
     // Sube la imagen tal cual (sin comprimir) a Firebase Storage y devuelve la URL para

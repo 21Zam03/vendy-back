@@ -18,12 +18,14 @@ public class SeccionResponse {
     private Long id;
     private String nombre;
     private Integer orden;
+    private Long pestanaId;
 
     public static SeccionResponse from(Seccion seccion) {
         return SeccionResponse.builder()
                 .id(seccion.getId())
                 .nombre(seccion.getNombre())
                 .orden(seccion.getOrden())
+                .pestanaId(seccion.getPestana() != null ? seccion.getPestana().getId() : null)
                 .build();
     }
 }

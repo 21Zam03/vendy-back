@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zam.vendy.dtos.seccion.SeccionRequest;
 import com.zam.vendy.entities.Negocio;
+import com.zam.vendy.entities.Pestana;
 import com.zam.vendy.entities.Seccion;
 import com.zam.vendy.exceptions.ResourceNotFoundException;
 import com.zam.vendy.repositories.ProductoRepository;
@@ -21,20 +22,24 @@ public class SeccionService {
     private final SeccionRepository seccionRepository;
     private final ProductoRepository productoRepository;
     private final NegocioService negocioService;
+    private final PestanaService pestanaService;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Seccion> listar(Integer idUsuario) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        pestanaService.asegurarSinHuerfanas(negocio);
         return seccionRepository.findByNegocio_IdOrderByOrdenAscIdAsc(negocio.getId());
     }
 
     @Transactional
     public Seccion crear(Integer idUsuario, SeccionRequest request) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        Pestana pestana = pestanaService.obtenerPropia(idUsuario, request.getPestanaId());
         int siguienteOrden = seccionRepository.findByNegocio_IdOrderByOrdenAscIdAsc(negocio.getId()).size();
 
         Seccion seccion = Seccion.builder()
                 .negocio(negocio)
+                .pestana(pestana)
                 .nombre(request.getNombre())
                 .orden(siguienteOrden)
                 .build();
@@ -45,7 +50,9 @@ public class SeccionService {
     @Transactional
     public Seccion actualizar(Integer idUsuario, Long seccionId, SeccionRequest request) {
         Seccion seccion = obtenerPropia(idUsuario, seccionId);
+        Pestana pestana = pestanaService.obtenerPropia(idUsuario, request.getPestanaId());
         seccion.setNombre(request.getNombre());
+        seccion.setPestana(pestana);
         return seccion;
     }
 

@@ -79,6 +79,13 @@ public class Producto {
     @Builder.Default
     private Boolean destacado = Boolean.FALSE;
 
+    // Orden dentro de su sección (o dentro del grupo "sin sección" cuando seccion es
+    // null) — dos productos de secciones distintas pueden compartir el mismo número,
+    // ya que el orden solo importa comparado con otros productos de la misma sección.
+    @Column(name = "orden", nullable = false)
+    @Builder.Default
+    private Integer orden = 0;
+
     @Column(name = "emoji")
     private String emoji;
 

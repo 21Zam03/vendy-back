@@ -9,7 +9,10 @@ public enum Background {
     SLATE("slate"),
     CREAM("cream"),
     MINT("mint"),
-    LAVENDER("lavender");
+    LAVENDER("lavender"),
+    // La URL de la foto vive en Apariencia.backgroundImageUrl. Se muestra con opacidad
+    // reducida para no competir visualmente con el contenido de la página.
+    IMAGEN("imagen");
 
     private final String value;
 

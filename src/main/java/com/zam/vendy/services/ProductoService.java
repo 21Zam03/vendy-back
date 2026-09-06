@@ -1,6 +1,7 @@
 package com.zam.vendy.services;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +53,7 @@ public class ProductoService {
                 .emoji(request.getEmoji())
                 .color(request.getColor())
                 .imagenUrl(request.getImagenUrl())
+                .orden(siguienteOrdenEnSeccion(negocio.getId(), seccion))
                 .build();
 
         return productoRepository.save(producto);
@@ -65,6 +67,14 @@ public class ProductoService {
 
         Categoria categoria = resolverCategoria(negocio.getId(), request.getCategoriaId());
         Seccion seccion = resolverSeccion(negocio.getId(), request.getSeccionId());
+
+        // Si cambia de sección, va al final de la nueva; si se queda en la misma, no se
+        // toca su posición solo porque se editó otro campo (precio, nombre, etc.).
+        Long seccionActualId = producto.getSeccion() != null ? producto.getSeccion().getId() : null;
+        Long seccionNuevaId = seccion != null ? seccion.getId() : null;
+        if (!Objects.equals(seccionActualId, seccionNuevaId)) {
+            producto.setOrden(siguienteOrdenEnSeccion(negocio.getId(), seccion));
+        }
 
         producto.setCategoria(categoria);
         producto.setSeccion(seccion);
@@ -80,6 +90,32 @@ public class ProductoService {
         producto.setImagenUrl(request.getImagenUrl());
 
         return producto;
+    }
+
+    @Transactional
+    public List<Producto> reordenarEnSeccion(Integer idUsuario, Long seccionId, List<Long> idsEnOrden) {
+        Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        List<Producto> propios = seccionId != null
+                ? productoRepository.findByNegocio_IdAndSeccion_Id(negocio.getId(), seccionId)
+                : productoRepository.findByNegocio_IdAndSeccionIsNull(negocio.getId());
+
+        for (int i = 0; i < idsEnOrden.size(); i++) {
+            final Long id = idsEnOrden.get(i);
+            final int orden = i;
+            propios.stream()
+                    .filter(p -> p.getId().equals(id))
+                    .findFirst()
+                    .ifPresent(p -> p.setOrden(orden));
+        }
+
+        return propios;
+    }
+
+    private int siguienteOrdenEnSeccion(Long negocioId, Seccion seccion) {
+        List<Producto> actuales = seccion != null
+                ? productoRepository.findByNegocio_IdAndSeccion_Id(negocioId, seccion.getId())
+                : productoRepository.findByNegocio_IdAndSeccionIsNull(negocioId);
+        return actuales.size();
     }
 
     @Transactional

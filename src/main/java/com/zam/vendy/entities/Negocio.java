@@ -71,6 +71,11 @@ public class Negocio {
     @Column(name = "ubicacion")
     private String ubicacion;
 
+    // Texto libre (ej. "Lun-Sáb 9am-8pm"), sin estructura de horario por día todavía.
+    // Solo lo usan las plantillas cuya composición incluye una sección de horario.
+    @Column(name = "horario")
+    private String horario;
+
     @Column(name = "logo_initials", length = 2)
     private String logoInitials;
 

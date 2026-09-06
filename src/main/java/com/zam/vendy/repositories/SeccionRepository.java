@@ -12,4 +12,8 @@ public interface SeccionRepository extends JpaRepository<Seccion, Long> {
     List<Seccion> findByNegocio_IdOrderByOrdenAscIdAsc(Long negocioId);
 
     Optional<Seccion> findByIdAndNegocio_Id(Long id, Long negocioId);
+
+    List<Seccion> findByNegocio_IdAndPestanaIsNull(Long negocioId);
+
+    List<Seccion> findByPestana_IdOrderByOrdenAscIdAsc(Long pestanaId);
 }
