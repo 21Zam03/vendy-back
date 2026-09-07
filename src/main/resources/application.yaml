@@ -58,8 +58,8 @@ spring:
             # el resto del backend sigue arrancando normal aunque todavía no estén
             # configuradas; "Continuar con Google" simplemente no va a funcionar hasta
             # que GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET existan en el entorno.
-            client-id:
-            client-secret:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: openid,profile,email
 
 security:
