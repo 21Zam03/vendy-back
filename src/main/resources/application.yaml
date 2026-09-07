@@ -1,5 +1,11 @@
 server:
   port: 8081
+  # En producción el HTTPS lo termina el proxy (nginx u otro) delante de este backend, que
+  # recibe la petición ya en HTTP plano — sin esto, Spring arma la redirect_uri de Google
+  # con "http://" en vez de "https://" (no coincide con lo registrado en Google Cloud
+  # Console → "Error 400: redirect_uri_mismatch"). Necesita que el proxy mande
+  # X-Forwarded-Proto/Host — si no los manda, hay que agregarlos ahí primero.
+  forward-headers-strategy: framework
   tomcat:
     max-part-count: 50
 
