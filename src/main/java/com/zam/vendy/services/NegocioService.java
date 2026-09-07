@@ -65,6 +65,9 @@ public class NegocioService {
         negocio.setHorario(request.getHorario());
         negocio.setLogoInitials(request.getLogoInitials());
         negocio.setLogoUrl(request.getLogoUrl());
+        // A diferencia de "plantilla", esto nunca lo bloquea el plan — es solo un dato
+        // para poder recomendarle esa plantilla más adelante si mejora de plan.
+        negocio.setRubroPreferido(request.getRubroPreferido());
 
         // El plan Gratis solo tiene el catálogo general — elegir una plantilla decorativa
         // (Moda, Comida, etc.) requiere plan Go o superior. El plan en sí no se toca acá:

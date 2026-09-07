@@ -73,6 +73,11 @@ public class NegocioUpdateRequest {
 
     private Plantilla plantilla;
 
+    // Rubro que el negocio dice tener (ej. al completar "Bienvenido a Vendy" recién creado
+    // con plan Gratis) — a diferencia de "plantilla", esto NUNCA lo bloquea el plan: es
+    // solo un dato para poder recomendarle esa plantilla más adelante si mejora su plan.
+    private Plantilla rubroPreferido;
+
     @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "accentColorHex debe ser un color hexadecimal, ej. #5a32f4")
     private String accentColorHex;
 

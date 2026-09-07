@@ -12,6 +12,7 @@ import com.zam.vendy.entities.embeddable.Apariencia;
 import com.zam.vendy.entities.embeddable.MetodoPago;
 import com.zam.vendy.entities.embeddable.RedesSociales;
 import com.zam.vendy.entities.enums.Plan;
+import com.zam.vendy.entities.enums.Plantilla;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -98,6 +99,14 @@ public class Negocio {
     @Column(name = "plan")
     @Builder.Default
     private Plan plan = Plan.GRATIS;
+
+    // Rubro que el negocio dice tener (ej. al completar el modal de bienvenida con plan
+    // Gratis, que no admite elegir una plantilla real todavía) — es solo un dato para
+    // poder recomendarle esa plantilla más adelante si mejora de plan. A diferencia de
+    // Apariencia.plantilla, nunca lo bloquea el plan actual.
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rubro_preferido")
+    private Plantilla rubroPreferido;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

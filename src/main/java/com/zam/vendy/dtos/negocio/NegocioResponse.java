@@ -49,6 +49,7 @@ public class NegocioResponse {
     private String coverImageUrl;
     private CatalogLayout catalogLayout;
     private Plantilla plantilla;
+    private Plantilla rubroPreferido;
     private String accentColorHex;
     private String backgroundImageUrl;
     private List<MetodoPagoResponse> metodosPago;
@@ -89,6 +90,7 @@ public class NegocioResponse {
                 .coverImageUrl(apariencia != null ? apariencia.getCoverImageUrl() : null)
                 .catalogLayout(apariencia != null ? apariencia.getCatalogLayout() : null)
                 .plantilla(apariencia != null ? apariencia.getPlantilla() : null)
+                .rubroPreferido(negocio.getRubroPreferido())
                 .accentColorHex(apariencia != null ? apariencia.getAccentColorHex() : null)
                 .backgroundImageUrl(apariencia != null ? apariencia.getBackgroundImageUrl() : null)
                 .metodosPago(negocio.getMetodosPago().stream().map(MetodoPagoResponse::from).toList())
