@@ -18,12 +18,16 @@ public class PestanaResponse {
     private Long id;
     private String nombre;
     private Integer orden;
+    private Boolean esHome;
+    private Boolean esGeneral;
 
     public static PestanaResponse from(Pestana pestana) {
         return PestanaResponse.builder()
                 .id(pestana.getId())
                 .nombre(pestana.getNombre())
                 .orden(pestana.getOrden())
+                .esHome(Boolean.TRUE.equals(pestana.getEsHome()))
+                .esGeneral(Boolean.TRUE.equals(pestana.getEsGeneral()))
                 .build();
     }
 }

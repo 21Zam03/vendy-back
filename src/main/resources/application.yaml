@@ -42,6 +42,20 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            # Se completan con las credenciales reales de Google Cloud Console vía
+            # variables de entorno — nunca hardcodeadas acá. Con el placeholder de abajo
+            # el resto del backend sigue arrancando normal aunque todavía no estén
+            # configuradas; "Continuar con Google" simplemente no va a funcionar hasta
+            # que GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET existan en el entorno.
+            client-id:
+            client-secret:
+            scope: openid,profile,email
+
 security:
   jwt:
     key:
@@ -62,7 +76,7 @@ parameters:
   cookie_path: /
 
 cors:
-  allowed-origins: http://localhost:3000,http://10.74.51.227:5173,https://vendy-front.vercel.app,http://172.20.181.227:5173
+  allowed-origins: http://localhost:3000,http://localhost:5173,http://10.74.51.227:5173,https://vendy-front.vercel.app,http://172.20.181.227:5173
 
 app:
   # URL pública donde vive el frontend (Vite SPA). Se usa para redirigir a

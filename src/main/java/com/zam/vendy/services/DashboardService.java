@@ -15,6 +15,7 @@ import com.zam.vendy.dtos.dashboard.VisitaPorDiaResponse;
 import com.zam.vendy.entities.ConsultaWhatsapp;
 import com.zam.vendy.entities.Negocio;
 import com.zam.vendy.entities.VisitaCatalogo;
+import com.zam.vendy.entities.enums.Plan;
 import com.zam.vendy.repositories.ConsultaWhatsappRepository;
 import com.zam.vendy.repositories.ProductoRepository;
 import com.zam.vendy.repositories.VisitaCatalogoRepository;
@@ -28,13 +29,17 @@ public class DashboardService {
     private static final int DIAS_HISTORIAL = 7;
 
     private final NegocioService negocioService;
+    private final SuscripcionService suscripcionService;
     private final VisitaCatalogoRepository visitaCatalogoRepository;
     private final ConsultaWhatsappRepository consultaWhatsappRepository;
     private final ProductoRepository productoRepository;
 
-    @Transactional(readOnly = true)
+    // Sin readOnly: requiereNivel puede autocurar una Suscripcion faltante (ver
+    // SuscripcionService), que necesita poder escribir.
+    @Transactional
     public DashboardResponse obtener(Integer idUsuario) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        suscripcionService.requiereNivel(negocio, Plan.GO.getNivel());
         Long negocioId = negocio.getId();
 
         long catalogVisits = visitaCatalogoRepository.sumCantidadByNegocioId(negocioId);

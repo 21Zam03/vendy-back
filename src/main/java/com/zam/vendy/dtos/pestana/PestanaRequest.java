@@ -14,4 +14,8 @@ public class PestanaRequest {
 
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
+
+    // Solo se usa al crear (ver PestanaService.crear) — actualizar() nunca la toca, así
+    // que renombrar una pestaña jamás le quita ni le agrega esta marca.
+    private Boolean esHome;
 }

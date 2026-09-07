@@ -11,13 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zam.vendy.dtos.negocio.MetodoPagoRequest;
 import com.zam.vendy.dtos.negocio.NegocioUpdateRequest;
 import com.zam.vendy.entities.Negocio;
+import com.zam.vendy.entities.Pestana;
 import com.zam.vendy.entities.embeddable.Apariencia;
 import com.zam.vendy.entities.embeddable.MetodoPago;
 import com.zam.vendy.entities.enums.CatalogLayout;
+import com.zam.vendy.entities.enums.Plan;
 import com.zam.vendy.entities.embeddable.RedesSociales;
+import com.zam.vendy.exceptions.LimitePlanExcedidoException;
 import com.zam.vendy.exceptions.ResourceNotFoundException;
 import com.zam.vendy.exceptions.SlugYaExisteException;
 import com.zam.vendy.repositories.NegocioRepository;
+import com.zam.vendy.repositories.PestanaRepository;
 import com.zam.vendy.repositories.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,8 @@ public class NegocioService {
 
     private final NegocioRepository negocioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PestanaRepository pestanaRepository;
+    private final SuscripcionService suscripcionService;
 
     @Transactional(readOnly = true)
     public Negocio obtenerPorUsuario(Integer idUsuario) {
@@ -43,7 +49,10 @@ public class NegocioService {
             throw new SlugYaExisteException(request.getSlug());
         }
 
-        Negocio negocio = negocioRepository.findByUsuario_IdUsuario(idUsuario)
+        Optional<Negocio> existente = negocioRepository.findByUsuario_IdUsuario(idUsuario);
+        boolean esNuevo = existente.isEmpty();
+
+        Negocio negocio = existente
                 .orElseGet(() -> Negocio.builder()
                         .usuario(usuarioRepository.getReferenceById(idUsuario))
                         .build());
@@ -56,6 +65,17 @@ public class NegocioService {
         negocio.setHorario(request.getHorario());
         negocio.setLogoInitials(request.getLogoInitials());
         negocio.setLogoUrl(request.getLogoUrl());
+
+        // El plan Gratis solo tiene el catálogo general — elegir una plantilla decorativa
+        // (Moda, Comida, etc.) requiere plan Go o superior. El plan en sí no se toca acá:
+        // se gestiona aparte, vía Suscripcion (ver SuscripcionService). Un negocio nuevo
+        // todavía no tiene fila en esa tabla —recién se crea más abajo—, así que para ese
+        // caso el nivel es Gratis por definición, sin necesidad de consultarla.
+        int nivelActual = esNuevo ? Plan.GRATIS.getNivel() : suscripcionService.nivelActual(negocio);
+        if (nivelActual < Plan.GO.getNivel() && request.getPlantilla() != null) {
+            throw new LimitePlanExcedidoException(
+                    "Tu plan actual (Vendy Gratis) solo incluye el catálogo general. Mejora tu plan para elegir una plantilla.");
+        }
 
         negocio.setRedesSociales(RedesSociales.builder()
                 .instagram(request.getInstagram())
@@ -78,7 +98,23 @@ public class NegocioService {
 
         negocio.setMetodosPago(mapearMetodosPago(request.getMetodosPago()));
 
-        return negocioRepository.save(negocio);
+        Negocio guardado = negocioRepository.save(negocio);
+
+        // Estilo de negocio por defecto: al crear el negocio por primera vez (sin importar
+        // qué plantilla decorativa elija después), arranca con una única pestaña "General"
+        // activa — ahí es donde vive su catálogo (todos los productos registrados) hasta
+        // que, si quiere, elija un estilo con estructura propia (Moda, Comida, etc.).
+        if (esNuevo) {
+            pestanaRepository.save(Pestana.builder()
+                    .negocio(guardado)
+                    .nombre("General")
+                    .orden(0)
+                    .esGeneral(true)
+                    .build());
+            suscripcionService.asegurarSuscripcionInicial(guardado);
+        }
+
+        return guardado;
     }
 
     // Importante: Hibernate necesita poder mutar (limpiar/rellenar) esta colección al

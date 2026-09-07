@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.zam.vendy.entities.embeddable.Apariencia;
 import com.zam.vendy.entities.embeddable.MetodoPago;
 import com.zam.vendy.entities.embeddable.RedesSociales;
+import com.zam.vendy.entities.enums.Plan;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -18,6 +19,8 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -89,6 +92,12 @@ public class Negocio {
 
     @Embedded
     private Apariencia apariencia;
+
+    // Se asigna a mano en la base de datos (ver Plan) — ningún endpoint deja elegirlo.
+    @Enumerated(EnumType.STRING)
+    @Column(name = "plan")
+    @Builder.Default
+    private Plan plan = Plan.GRATIS;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -22,4 +22,22 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             WHERE u.nombreUsuario = :nombreUsuario
             """)
     Optional<Usuario> findByNombreUsuarioWithRolesAndPermisos(@Param("nombreUsuario") String nombreUsuario);
+
+    @Query("""
+            SELECT DISTINCT u FROM Usuario u
+            LEFT JOIN FETCH u.roles r
+            LEFT JOIN FETCH r.permisos
+            LEFT JOIN FETCH u.empresa
+            WHERE u.googleId = :googleId
+            """)
+    Optional<Usuario> findByGoogleIdWithRolesAndPermisos(@Param("googleId") String googleId);
+
+    @Query("""
+            SELECT DISTINCT u FROM Usuario u
+            LEFT JOIN FETCH u.roles r
+            LEFT JOIN FETCH r.permisos
+            LEFT JOIN FETCH u.empresa
+            WHERE u.correo = :correo
+            """)
+    Optional<Usuario> findByCorreoWithRolesAndPermisos(@Param("correo") String correo);
 }

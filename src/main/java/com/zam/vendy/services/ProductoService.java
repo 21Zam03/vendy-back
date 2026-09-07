@@ -8,9 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zam.vendy.dtos.producto.ProductoRequest;
 import com.zam.vendy.entities.Categoria;
+import com.zam.vendy.entities.Membresia;
 import com.zam.vendy.entities.Negocio;
 import com.zam.vendy.entities.Producto;
 import com.zam.vendy.entities.Seccion;
+import com.zam.vendy.exceptions.LimitePlanExcedidoException;
 import com.zam.vendy.exceptions.ResourceNotFoundException;
 import com.zam.vendy.repositories.CategoriaRepository;
 import com.zam.vendy.repositories.ProductoRepository;
@@ -26,6 +28,7 @@ public class ProductoService {
     private final CategoriaRepository categoriaRepository;
     private final SeccionRepository seccionRepository;
     private final NegocioService negocioService;
+    private final SuscripcionService suscripcionService;
 
     @Transactional(readOnly = true)
     public List<Producto> listar(Integer idUsuario) {
@@ -36,6 +39,15 @@ public class ProductoService {
     @Transactional
     public Producto crear(Integer idUsuario, ProductoRequest request) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+
+        Membresia membresia = suscripcionService.obtenerOAsegurarMembresiaActiva(negocio);
+        if (membresia.getLimiteProductos() != null
+                && productoRepository.countByNegocio_Id(negocio.getId()) >= membresia.getLimiteProductos()) {
+            throw new LimitePlanExcedidoException(
+                    "Alcanzaste el límite de " + membresia.getLimiteProductos()
+                            + " productos de tu plan " + membresia.getNombre() + ". Mejora tu plan para agregar más.");
+        }
+
         Categoria categoria = resolverCategoria(negocio.getId(), request.getCategoriaId());
         Seccion seccion = resolverSeccion(negocio.getId(), request.getSeccionId());
 

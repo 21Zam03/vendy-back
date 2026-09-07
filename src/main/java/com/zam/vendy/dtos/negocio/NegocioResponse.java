@@ -1,5 +1,6 @@
 package com.zam.vendy.dtos.negocio;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.zam.vendy.entities.enums.Background;
 import com.zam.vendy.entities.enums.CatalogLayout;
 import com.zam.vendy.entities.enums.Cover;
 import com.zam.vendy.entities.enums.Font;
+import com.zam.vendy.entities.enums.Plan;
 import com.zam.vendy.entities.enums.Plantilla;
 import com.zam.vendy.entities.enums.Radius;
 
@@ -50,15 +52,24 @@ public class NegocioResponse {
     private String accentColorHex;
     private String backgroundImageUrl;
     private List<MetodoPagoResponse> metodosPago;
+    private Plan plan;
+    private LocalDateTime planActivoDesde;
+    private LocalDate planVenceEl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static NegocioResponse from(Negocio negocio) {
+    // "plan"/"planActivoDesde"/"planVenceEl" se reciben ya resueltos desde la Suscripcion
+    // activa (ver SuscripcionService) en vez de leerse directo de Negocio.plan — esa
+    // columna quedó como dato viejo desde que el plan se maneja con Suscripcion.
+    public static NegocioResponse from(Negocio negocio, Plan plan, LocalDateTime planActivoDesde, LocalDate planVenceEl) {
         RedesSociales redes = negocio.getRedesSociales();
         Apariencia apariencia = negocio.getApariencia();
 
         return NegocioResponse.builder()
                 .id(negocio.getId())
+                .plan(plan)
+                .planActivoDesde(planActivoDesde)
+                .planVenceEl(planVenceEl)
                 .nombre(negocio.getNombre())
                 .slug(negocio.getSlug())
                 .descripcion(negocio.getDescripcion())

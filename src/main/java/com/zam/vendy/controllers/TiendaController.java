@@ -1,6 +1,7 @@
 package com.zam.vendy.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,16 @@ public class TiendaController {
                 .map(PestanaResponse::from)
                 .toList();
         return ResponseEntity.ok(pestanas);
+    }
+
+    @GetMapping("/banners")
+    public ResponseEntity<Map<String, String>> banners(@PathVariable String slug) {
+        return ResponseEntity.ok(tiendaService.obtenerBanners(slug));
+    }
+
+    @GetMapping("/textos")
+    public ResponseEntity<Map<String, String>> textos(@PathVariable String slug) {
+        return ResponseEntity.ok(tiendaService.obtenerTextos(slug));
     }
 
     @GetMapping("/colecciones")

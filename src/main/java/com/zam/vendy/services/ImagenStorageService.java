@@ -38,6 +38,10 @@ public class ImagenStorageService {
         return subirImagen(archivo, "productos");
     }
 
+    public String subirArchivoNegocio(MultipartFile archivo) {
+        return subirImagen(archivo, "negocios/archivos");
+    }
+
     public String subirLogoNegocio(MultipartFile archivo) {
         return subirImagen(archivo, "negocios");
     }

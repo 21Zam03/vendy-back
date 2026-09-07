@@ -23,6 +23,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.zam.vendy.security.jwt.JwtAuthenticationFilter;
+import com.zam.vendy.security.oauth2.CustomOidcUserService;
+import com.zam.vendy.security.oauth2.GoogleAuthenticationFailureHandler;
+import com.zam.vendy.security.oauth2.GoogleAuthenticationSuccessHandler;
 import com.zam.vendy.security.userdetails.UserDetailsServiceImpl;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,13 +41,19 @@ public class SecurityConfig {
             "/api/v1/auth/login",
             "/api/v1/auth/logout",
             "/api/v1/tienda/**",
+            "/api/v1/solicitudes-registro",
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/oauth2/**",
+            "/login/oauth2/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsServiceImpl userDetailsService;
+    private final CustomOidcUserService customOidcUserService;
+    private final GoogleAuthenticationSuccessHandler googleAuthenticationSuccessHandler;
+    private final GoogleAuthenticationFailureHandler googleAuthenticationFailureHandler;
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -60,6 +69,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
+                        .successHandler(googleAuthenticationSuccessHandler)
+                        .failureHandler(googleAuthenticationFailureHandler))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> response.sendError(
                                 HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage()))

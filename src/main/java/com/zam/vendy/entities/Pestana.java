@@ -50,4 +50,24 @@ public class Pestana {
     @Column(name = "orden", nullable = false)
     @Builder.Default
     private Integer orden = 0;
+
+    // Marca la pestaña que arma la portada especial de Moda (carrusel, mosaico de
+    // categorías, etc.) — se fija una sola vez al crearla desde la plantilla y es
+    // independiente de "nombre", para que el negocio pueda renombrarla libremente (ej.
+    // "Home" -> "Inicio") sin perder esa estructura. Nullable a propósito: las pestañas
+    // creadas antes de que existiera este campo lo tienen en null hasta que se autocuran
+    // (ver PestanaService.asegurarSinHuerfanas).
+    @Column(name = "es_home")
+    @Builder.Default
+    private Boolean esHome = false;
+
+    // Marca la pestaña "General" que autocura Secciones sin pestaña (ver
+    // PestanaService.asegurarSinHuerfanas) — representa el catálogo completo del negocio
+    // (todos los productos registrados), y el frontend la muestra con una grilla de
+    // catálogo simple en vez del estilo decorativo de la plantilla. Mismo criterio que
+    // esHome: independiente de "nombre", nullable a propósito para autocurar pestañas
+    // "General" creadas antes de que existiera este campo.
+    @Column(name = "es_general")
+    @Builder.Default
+    private Boolean esGeneral = false;
 }

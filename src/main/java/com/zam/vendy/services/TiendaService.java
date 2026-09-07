@@ -2,6 +2,8 @@ package com.zam.vendy.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,8 @@ import com.zam.vendy.entities.Categoria;
 import com.zam.vendy.entities.ConsultaWhatsapp;
 import com.zam.vendy.entities.EnlaceNegocio;
 import com.zam.vendy.entities.Negocio;
+import com.zam.vendy.entities.NegocioBanner;
+import com.zam.vendy.entities.NegocioTexto;
 import com.zam.vendy.entities.Pestana;
 import com.zam.vendy.entities.Producto;
 import com.zam.vendy.entities.Seccion;
@@ -24,7 +28,9 @@ import com.zam.vendy.repositories.CatalogoRepository;
 import com.zam.vendy.repositories.CategoriaRepository;
 import com.zam.vendy.repositories.ConsultaWhatsappRepository;
 import com.zam.vendy.repositories.EnlaceNegocioRepository;
+import com.zam.vendy.repositories.NegocioBannerRepository;
 import com.zam.vendy.repositories.NegocioRepository;
+import com.zam.vendy.repositories.NegocioTextoRepository;
 import com.zam.vendy.repositories.PestanaRepository;
 import com.zam.vendy.repositories.ProductoRepository;
 import com.zam.vendy.repositories.SeccionRepository;
@@ -49,6 +55,8 @@ public class TiendaService {
     private final SeccionRepository seccionRepository;
     private final PestanaRepository pestanaRepository;
     private final PestanaService pestanaService;
+    private final NegocioBannerRepository negocioBannerRepository;
+    private final NegocioTextoRepository negocioTextoRepository;
 
     @Transactional(readOnly = true)
     public Negocio obtenerPorSlug(String slug) {
@@ -79,6 +87,26 @@ public class TiendaService {
         Negocio negocio = obtenerPorSlug(slug);
         pestanaService.asegurarSinHuerfanas(negocio);
         return pestanaRepository.findByNegocio_IdOrderByOrdenAscIdAsc(negocio.getId());
+    }
+
+    // Fotos elegidas a mano por el negocio para espacios puntuales de la plantilla (ej.
+    // el carrusel de portada de Moda) — anulan la foto automática solo donde el negocio
+    // ya subió una propia.
+    @Transactional(readOnly = true)
+    public Map<String, String> obtenerBanners(String slug) {
+        Negocio negocio = obtenerPorSlug(slug);
+        return negocioBannerRepository.findByNegocio_Id(negocio.getId()).stream()
+                .collect(Collectors.toMap(NegocioBanner::getSlot, NegocioBanner::getImagenUrl));
+    }
+
+    // Títulos elegidos a mano por el negocio para espacios puntuales de la plantilla (ej.
+    // el título de una sección de Home) — si el negocio no escribió nada para un slot,
+    // simplemente no aparece en el mapa (sin texto por defecto inventado).
+    @Transactional(readOnly = true)
+    public Map<String, String> obtenerTextos(String slug) {
+        Negocio negocio = obtenerPorSlug(slug);
+        return negocioTextoRepository.findByNegocio_Id(negocio.getId()).stream()
+                .collect(Collectors.toMap(NegocioTexto::getSlot, NegocioTexto::getTexto));
     }
 
     @Transactional(readOnly = true)

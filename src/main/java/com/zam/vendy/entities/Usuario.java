@@ -4,8 +4,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.zam.vendy.entities.enums.ProveedorAuth;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -58,6 +62,16 @@ public class Usuario {
 
     @Column(name = "correo", length = 50)
     private String correo;
+
+    // Cuentas creadas por "Continuar con Google" no tienen contraseña (queda null):
+    // googleId es el "sub" del token de Google, único por cuenta de Google.
+    @Column(name = "google_id", unique = true)
+    private String googleId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "proveedor")
+    @Builder.Default
+    private ProveedorAuth proveedor = ProveedorAuth.LOCAL;
 
     @Column(name = "activo")
     private Boolean activo;

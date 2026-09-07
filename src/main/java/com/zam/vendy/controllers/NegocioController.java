@@ -15,9 +15,12 @@ import com.zam.vendy.dtos.negocio.NegocioResponse;
 import com.zam.vendy.dtos.negocio.NegocioUpdateRequest;
 import com.zam.vendy.dtos.producto.ImagenSubidaResponse;
 import com.zam.vendy.entities.Negocio;
+import com.zam.vendy.entities.Suscripcion;
+import com.zam.vendy.entities.enums.Plan;
 import com.zam.vendy.security.userdetails.UserDetailsImpl;
 import com.zam.vendy.services.ImagenStorageService;
 import com.zam.vendy.services.NegocioService;
+import com.zam.vendy.services.SuscripcionService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,19 +31,26 @@ import lombok.RequiredArgsConstructor;
 public class NegocioController {
 
     private final NegocioService negocioService;
+    private final SuscripcionService suscripcionService;
     private final ImagenStorageService imagenStorageService;
 
     @GetMapping
     public ResponseEntity<NegocioResponse> obtener(@AuthenticationPrincipal UserDetailsImpl principal) {
         Negocio negocio = negocioService.obtenerPorUsuario(principal.getIdUsuario());
-        return ResponseEntity.ok(NegocioResponse.from(negocio));
+        return ResponseEntity.ok(construirRespuesta(negocio));
     }
 
     @PutMapping
     public ResponseEntity<NegocioResponse> guardar(@AuthenticationPrincipal UserDetailsImpl principal,
             @Valid @RequestBody NegocioUpdateRequest request) {
         Negocio negocio = negocioService.guardar(principal.getIdUsuario(), request);
-        return ResponseEntity.ok(NegocioResponse.from(negocio));
+        return ResponseEntity.ok(construirRespuesta(negocio));
+    }
+
+    private NegocioResponse construirRespuesta(Negocio negocio) {
+        Suscripcion suscripcion = suscripcionService.obtenerOAsegurarSuscripcionActiva(negocio);
+        Plan plan = Plan.valueOf(suscripcion.getMembresia().getClave());
+        return NegocioResponse.from(negocio, plan, suscripcion.getCreatedAt(), suscripcion.getFechaVencimiento());
     }
 
     // Sube la foto tal cual (sin comprimir) a Firebase Storage y devuelve la URL para

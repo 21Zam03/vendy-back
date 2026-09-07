@@ -13,6 +13,7 @@ import com.zam.vendy.entities.Negocio;
 import com.zam.vendy.entities.Producto;
 import com.zam.vendy.entities.embeddable.Apariencia;
 import com.zam.vendy.entities.enums.CatalogLayout;
+import com.zam.vendy.entities.enums.Plan;
 import com.zam.vendy.exceptions.ResourceNotFoundException;
 import com.zam.vendy.exceptions.SlugYaExisteException;
 import com.zam.vendy.repositories.CatalogoRepository;
@@ -27,16 +28,21 @@ public class CatalogoService {
     private final CatalogoRepository catalogoRepository;
     private final ProductoRepository productoRepository;
     private final NegocioService negocioService;
+    private final SuscripcionService suscripcionService;
 
-    @Transactional(readOnly = true)
+    // Sin readOnly: requiereNivel puede autocurar una Suscripcion faltante (ver
+    // SuscripcionService), que necesita poder escribir.
+    @Transactional
     public List<Catalogo> listar(Integer idUsuario) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        suscripcionService.requiereNivel(negocio, Plan.GO.getNivel());
         return catalogoRepository.findByNegocio_IdOrderByCreatedAtDesc(negocio.getId());
     }
 
     @Transactional
     public Catalogo crear(Integer idUsuario, CatalogoRequest request) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        suscripcionService.requiereNivel(negocio, Plan.GO.getNivel());
         validarSlugDisponible(negocio.getId(), request.getSlug(), null);
 
         Catalogo catalogo = Catalogo.builder()
@@ -106,6 +112,7 @@ public class CatalogoService {
 
     private Catalogo obtenerPropio(Integer idUsuario, Long catalogoId) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        suscripcionService.requiereNivel(negocio, Plan.GO.getNivel());
         return catalogoRepository.findByIdAndNegocio_Id(catalogoId, negocio.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Colección no encontrada"));
     }
