@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zam.vendy.entities.Negocio;
 import com.zam.vendy.entities.NegocioTexto;
 import com.zam.vendy.entities.enums.Plantilla;
+import com.zam.vendy.repositories.NegocioRepository;
 import com.zam.vendy.repositories.NegocioTextoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class NegocioTextoService {
 
     private final NegocioTextoRepository negocioTextoRepository;
     private final NegocioService negocioService;
+    private final NegocioRepository negocioRepository;
 
     @Transactional(readOnly = true)
     public Map<String, String> listarPropios(Integer idUsuario) {
@@ -35,6 +37,9 @@ public class NegocioTextoService {
     @Transactional
     public void guardar(Integer idUsuario, String slot, String texto) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        // Ver el mismo bloqueo en NegocioBannerService: evita el mismo choque contra el
+        // UNIQUE (negocio_id, plantilla, slot) con dos requests concurrentes del mismo slot.
+        negocioRepository.lockById(negocio.getId());
         Plantilla plantilla = resolverPlantilla(negocio, slot);
         NegocioTexto item = negocioTextoRepository.findByNegocio_IdAndSlotAndPlantilla(negocio.getId(), slot, plantilla)
                 .orElseGet(() -> NegocioTexto.builder().negocio(negocio).slot(slot).plantilla(plantilla).build());

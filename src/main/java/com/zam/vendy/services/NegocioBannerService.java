@@ -10,6 +10,7 @@ import com.zam.vendy.entities.Negocio;
 import com.zam.vendy.entities.NegocioBanner;
 import com.zam.vendy.entities.enums.Plantilla;
 import com.zam.vendy.repositories.NegocioBannerRepository;
+import com.zam.vendy.repositories.NegocioRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,7 @@ public class NegocioBannerService {
 
     private final NegocioBannerRepository negocioBannerRepository;
     private final NegocioService negocioService;
+    private final NegocioRepository negocioRepository;
 
     @Transactional(readOnly = true)
     public Map<String, String> listarPropios(Integer idUsuario) {
@@ -35,6 +37,13 @@ public class NegocioBannerService {
     @Transactional
     public void guardar(Integer idUsuario, String slot, String imagenUrl) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
+        // Bloquea la fila del negocio hasta el final de esta transacción: dos requests
+        // concurrentes para el mismo slot (ej. subir varias fotos del carrusel casi a la
+        // vez) se ejecutan una detrás de la otra en vez de leer ambas "todavía no existe"
+        // al mismo tiempo e insertar cada una la suya — sin este bloqueo la segunda
+        // chocaba con el UNIQUE (negocio_id, plantilla, slot) en vez de actualizar la fila
+        // que la primera ya había creado.
+        negocioRepository.lockById(negocio.getId());
         Plantilla plantilla = resolverPlantilla(negocio, slot);
         NegocioBanner banner = negocioBannerRepository.findByNegocio_IdAndSlotAndPlantilla(negocio.getId(), slot, plantilla)
                 .orElseGet(() -> NegocioBanner.builder().negocio(negocio).slot(slot).plantilla(plantilla).build());
