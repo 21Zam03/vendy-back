@@ -95,8 +95,8 @@ public class TiendaService {
     @Transactional(readOnly = true)
     public Map<String, String> obtenerBanners(String slug) {
         Negocio negocio = obtenerPorSlug(slug);
-        return negocioBannerRepository.findByNegocio_Id(negocio.getId()).stream()
-                .collect(Collectors.toMap(NegocioBanner::getSlot, NegocioBanner::getImagenUrl));
+        return negocioBannerRepository.findVisiblesPorNegocio(negocio.getId(), negocio.getApariencia().getPlantilla()).stream()
+                .collect(Collectors.toMap(NegocioBanner::getSlot, NegocioBanner::getImagenUrl, (anterior, nuevo) -> nuevo));
     }
 
     // Títulos elegidos a mano por el negocio para espacios puntuales de la plantilla (ej.
@@ -105,8 +105,8 @@ public class TiendaService {
     @Transactional(readOnly = true)
     public Map<String, String> obtenerTextos(String slug) {
         Negocio negocio = obtenerPorSlug(slug);
-        return negocioTextoRepository.findByNegocio_Id(negocio.getId()).stream()
-                .collect(Collectors.toMap(NegocioTexto::getSlot, NegocioTexto::getTexto));
+        return negocioTextoRepository.findVisiblesPorNegocio(negocio.getId(), negocio.getApariencia().getPlantilla()).stream()
+                .collect(Collectors.toMap(NegocioTexto::getSlot, NegocioTexto::getTexto, (anterior, nuevo) -> nuevo));
     }
 
     @Transactional(readOnly = true)

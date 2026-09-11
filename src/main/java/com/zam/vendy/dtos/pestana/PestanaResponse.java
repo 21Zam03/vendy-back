@@ -20,6 +20,7 @@ public class PestanaResponse {
     private Integer orden;
     private Boolean esHome;
     private Boolean esGeneral;
+    private Boolean activa;
 
     public static PestanaResponse from(Pestana pestana) {
         return PestanaResponse.builder()
@@ -28,6 +29,9 @@ public class PestanaResponse {
                 .orden(pestana.getOrden())
                 .esHome(Boolean.TRUE.equals(pestana.getEsHome()))
                 .esGeneral(Boolean.TRUE.equals(pestana.getEsGeneral()))
+                // null (pestañas de antes de este campo) se manda como activa=true: nunca
+                // deben desaparecer solas del catálogo por una migración de columna.
+                .activa(!Boolean.FALSE.equals(pestana.getActiva()))
                 .build();
     }
 }

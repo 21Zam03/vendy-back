@@ -1,6 +1,6 @@
 package com.zam.vendy.dtos.pestana;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PestanaRequest {
+public class PestanaActivaRequest {
 
-    @NotBlank(message = "El nombre es obligatorio")
-    private String nombre;
+    @NotNull(message = "activa es obligatorio")
+    private Boolean activa;
 }

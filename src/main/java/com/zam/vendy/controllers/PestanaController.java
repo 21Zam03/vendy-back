@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zam.vendy.dtos.pestana.PestanaActivaRequest;
 import com.zam.vendy.dtos.pestana.PestanaRequest;
 import com.zam.vendy.dtos.pestana.PestanaResponse;
 import com.zam.vendy.security.userdetails.UserDetailsImpl;
@@ -49,6 +51,14 @@ public class PestanaController {
             @PathVariable Long id, @Valid @RequestBody PestanaRequest request) {
         PestanaResponse pestana = PestanaResponse.from(
                 pestanaService.actualizar(principal.getIdUsuario(), id, request));
+        return ResponseEntity.ok(pestana);
+    }
+
+    @PatchMapping("/{id}/activa")
+    public ResponseEntity<PestanaResponse> cambiarActiva(@AuthenticationPrincipal UserDetailsImpl principal,
+            @PathVariable Long id, @Valid @RequestBody PestanaActivaRequest request) {
+        PestanaResponse pestana = PestanaResponse.from(
+                pestanaService.cambiarActiva(principal.getIdUsuario(), id, Boolean.TRUE.equals(request.getActiva())));
         return ResponseEntity.ok(pestana);
     }
 

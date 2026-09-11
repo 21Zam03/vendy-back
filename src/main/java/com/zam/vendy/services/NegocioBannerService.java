@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zam.vendy.entities.Negocio;
 import com.zam.vendy.entities.NegocioBanner;
+import com.zam.vendy.entities.enums.Plantilla;
 import com.zam.vendy.repositories.NegocioBannerRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,20 +23,21 @@ public class NegocioBannerService {
     @Transactional(readOnly = true)
     public Map<String, String> listarPropios(Integer idUsuario) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
-        return listarPorNegocio(negocio.getId());
+        return listarPorNegocio(negocio);
     }
 
     @Transactional(readOnly = true)
-    public Map<String, String> listarPorNegocio(Long negocioId) {
-        return negocioBannerRepository.findByNegocio_Id(negocioId).stream()
-                .collect(Collectors.toMap(NegocioBanner::getSlot, NegocioBanner::getImagenUrl));
+    public Map<String, String> listarPorNegocio(Negocio negocio) {
+        return negocioBannerRepository.findVisiblesPorNegocio(negocio.getId(), negocio.getApariencia().getPlantilla()).stream()
+                .collect(Collectors.toMap(NegocioBanner::getSlot, NegocioBanner::getImagenUrl, (anterior, nuevo) -> nuevo));
     }
 
     @Transactional
     public void guardar(Integer idUsuario, String slot, String imagenUrl) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
-        NegocioBanner banner = negocioBannerRepository.findByNegocio_IdAndSlot(negocio.getId(), slot)
-                .orElseGet(() -> NegocioBanner.builder().negocio(negocio).slot(slot).build());
+        Plantilla plantilla = resolverPlantilla(negocio, slot);
+        NegocioBanner banner = negocioBannerRepository.findByNegocio_IdAndSlotAndPlantilla(negocio.getId(), slot, plantilla)
+                .orElseGet(() -> NegocioBanner.builder().negocio(negocio).slot(slot).plantilla(plantilla).build());
         banner.setImagenUrl(imagenUrl);
         negocioBannerRepository.save(banner);
     }
@@ -43,6 +45,13 @@ public class NegocioBannerService {
     @Transactional
     public void eliminar(Integer idUsuario, String slot) {
         Negocio negocio = negocioService.obtenerPorUsuario(idUsuario);
-        negocioBannerRepository.deleteByNegocio_IdAndSlot(negocio.getId(), slot);
+        negocioBannerRepository.deleteByNegocio_IdAndSlotAndPlantilla(negocio.getId(), slot, resolverPlantilla(negocio, slot));
+    }
+
+    // Los slots de un "Home" de plantilla (carrusel, mosaico, etc.) guardan su progreso por
+    // separado para cada plantilla; el resto (ej. el topbar) se comparte sin importar cuál
+    // esté activa — ver el comentario en NegocioBanner.
+    private Plantilla resolverPlantilla(Negocio negocio, String slot) {
+        return slot.startsWith("home-") ? negocio.getApariencia().getPlantilla() : null;
     }
 }

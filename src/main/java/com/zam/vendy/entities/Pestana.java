@@ -70,4 +70,14 @@ public class Pestana {
     @Column(name = "es_general")
     @Builder.Default
     private Boolean esGeneral = false;
+
+    // Si el negocio la desactiva, deja de listarse en el catálogo público (pero sigue
+    // existiendo, con sus secciones/productos intactos) — puede reactivarla cuando
+    // quiera (ver PestanaService.cambiarActiva). Nullable a propósito: pestañas creadas
+    // antes de que existiera este campo quedan en null, que se trata como "activa" en
+    // todos lados (nunca deben desaparecer solas del catálogo por una migración de
+    // columna) — ver PestanaResponse.from y CatalogTemplateRenderer.vue.
+    @Column(name = "activa")
+    @Builder.Default
+    private Boolean activa = true;
 }
